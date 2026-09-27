@@ -49,7 +49,7 @@ public class RUDScreen {
         deletarPedidoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DAO DAOpedido = new DAO<>(Pedido.class);
+                DAO<Pedido> DAOpedido = new DAO<>(Pedido.class);
                 DAOpedido.deleteObjectById(Integer.parseInt(idField.getText()));
             }
         });
@@ -57,8 +57,8 @@ public class RUDScreen {
         atualizarPagamentoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DAO DAOPedido = new DAO<>(Pedido.class);
-                Pedido pedido = (Pedido) DAOPedido.selectNaDBbyID(Integer.parseInt(idField.getText()));
+                DAO<Pedido> DAOPedido = new DAO<>(Pedido.class);
+                Pedido pedido = DAOPedido.selectNaDBbyID(Integer.parseInt(idField.getText()));
                 Pagamento pagamento = new Pagamento(
                         null,
                         String.valueOf(pagamentoEscolha.getSelectedItem()),
@@ -75,7 +75,7 @@ public class RUDScreen {
         String[] pagamentosTipos = {"Boleto","Cartão de Crédito", "PIX"};
         pagamentoEscolha = new JComboBox<>(pagamentosTipos);
 
-        DAO daoPedido = new DAO<>(Pedido.class);
+        DAO<Pedido> daoPedido = new DAO<>(Pedido.class);
         List<Pedido> pedidoList = daoPedido.getAllObjects();
 
         Object[][] dados = montaTabelaDePedidos(pedidoList);
@@ -89,7 +89,7 @@ public class RUDScreen {
 
     private void atualizarTabela(){
 
-        DAO daoPedido = new DAO<>(Pedido.class);
+        DAO<Pedido> daoPedido = new DAO<>(Pedido.class);
         List<Pedido> pedidoList = daoPedido.getAllObjects();
 
         Object[][] dados = montaTabelaDePedidos(pedidoList);
@@ -101,8 +101,8 @@ public class RUDScreen {
 
     // busca um pedido por ID e mostra ele na table
     private void buscarByIdTabela(Integer idParam){
-        DAO daoPedido = new DAO<>(Pedido.class);
-        Pedido pedido = (Pedido) daoPedido.selectNaDBbyID(idParam);
+        DAO<Pedido> daoPedido = new DAO<>(Pedido.class);
+        Pedido pedido = daoPedido.selectNaDBbyID(idParam);
 
         Object[] objPedido = {
                 pedido.getIdPedido(),pedido.getHoraPedido(),pedido.getLocalDeEntrega(),

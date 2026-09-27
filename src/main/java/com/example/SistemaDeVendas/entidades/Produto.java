@@ -51,6 +51,7 @@ public class Produto implements Serializable {
                 "idProduto=" + idProduto +
                 ", nome='" + nome + '\'' +
                 ", sabor='" + sabor + '\'' +
-                ", preco=" + preco;
+                ", preco=" + preco +
+                '}';
     }
 }

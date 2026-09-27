@@ -50,24 +50,25 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Instanciamos os DAOs que vão ser utilizados, de produto e de pedido
-                DAO daoProduto = new DAO<>(Produto.class);
-                DAO daoDePedido = new DAO<>(Pedido.class);
+                DAO<Produto> daoProduto = new DAO<>(Produto.class);
+                DAO<Pedido> daoDePedido = new DAO<>(Pedido.class);
+                DAO<ProdutoPedido> daoDeProdutoPedido = new DAO<>(ProdutoPedido.class);
 
                 // Cria-se o pedido no momento que o cliente clica no botão de adicionar ao carrinho.
                 pedido = new Pedido(null,null,null);
 
 
                 // Produto 1 é buscado do banco de dados e instanciado no programa
-                Produto produto = (Produto) daoProduto.selectNaDBbyID(1);
+                Produto produto = daoProduto.selectNaDBbyID(1);
                 ProdutoPedido produtoPedido = new ProdutoPedido(pedido, produto, Integer.parseInt(quantidadeAField.getText()));
 
                 // Produto 2 é buscado do banco de dados e instanciado no programa
-                Produto produto2 = (Produto) daoProduto.selectNaDBbyID(2);
+                Produto produto2 = daoProduto.selectNaDBbyID(2);
                 ProdutoPedido produtoPedido2 = new ProdutoPedido(pedido, produto2, Integer.parseInt(quantidadeBField.getText()));
 
 
                 // Produto 3 é buscado do banco de dados e instanciado no programa
-                Produto produto3 = (Produto) daoProduto.selectNaDBbyID(3);
+                Produto produto3 = daoProduto.selectNaDBbyID(3);
                 ProdutoPedido produtoPedido3 = new ProdutoPedido(pedido, produto3, Integer.parseInt(quantidadeCField.getText()));
 
 
@@ -75,9 +76,9 @@ public class App {
                 pedido.adicionarProduto(produtoPedido2);
                 pedido.adicionarProduto(produtoPedido3);
                 daoDePedido.persisteNoDB(pedido);
-                daoProduto.persisteNoDB(produtoPedido);
-                daoProduto.persisteNoDB(produtoPedido2);
-                daoProduto.persisteNoDB(produtoPedido3);
+                daoDeProdutoPedido.persisteNoDB(produtoPedido);
+                daoDeProdutoPedido.persisteNoDB(produtoPedido2);
+                daoDeProdutoPedido.persisteNoDB(produtoPedido3);
             }
         });
     }
@@ -124,7 +125,6 @@ public class App {
 
 
         //partezinha do merchant que eu sou esperto né ta ligado
-        labelDoMerchant = new JLabel();
         ImageIcon IconMerchant = new ImageIcon("assets/ETIQUETA 1 WOLFF'S-1.png");
         labelDoMerchant = new JLabel(trataImagem(IconMerchant));
         Font myFont = new Font("Arial", Font.BOLD, 20);

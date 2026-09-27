@@ -1,9 +1,8 @@
 package com.example.SistemaDeVendas.DAO;
 
-import org.hibernate.Hibernate;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.io.Serializable;
 import java.util.List;
@@ -13,7 +12,6 @@ public class DAO<T extends Serializable> {
     private Class<T> entidade;
 
     private EntityManagerFactory emf;
-    private EntityManager em;
 
     public DAO(Class<T> entidade) {
         this.entidade = entidade;
@@ -25,52 +23,87 @@ public class DAO<T extends Serializable> {
 
     public void persisteNoDB(T object) {
         EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        em.persist(object);
-        em.getTransaction().commit();
-        em.close();
-        System.out.println("PERSISTIDO NA DATABASE: \n" + object.toString() + "\n");
+        try {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                em.persist(object);
+                tx.commit();
+            } catch (RuntimeException e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                throw e;
+            }
+            System.out.println("PERSISTIDO NA DATABASE: \n" + object.toString() + "\n");
+        } finally {
+            em.close();
+        }
     }
 
     public T selectNaDBbyID(Integer id) {
         EntityManager em = emf.createEntityManager();
-        T result = em.find(entidade, id);
-        em.close();
-        return result;
+        try {
+            return em.find(entidade, id);
+        } finally {
+            em.close();
+        }
     }
 
     public void update(T object) {
         EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        em.merge(object);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                em.merge(object);
+                tx.commit();
+            } catch (RuntimeException e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                throw e;
+            }
+        } finally {
+            em.close();
+        }
     }
 
     public List<T> getAllObjects() {
         EntityManager em = emf.createEntityManager();
-        List<T> objectList = null;
-        try{
-            objectList = em.createQuery("SELECT o FROM " + entidade.getSimpleName() + " o",entidade).getResultList();
+        try {
+            return em.createQuery("SELECT o FROM " + entidade.getSimpleName() + " o", entidade).getResultList();
         } finally {
             em.close();
         }
-        return objectList;
     }
 
     public void deleteObjectById(Integer id) {
         EntityManager em = emf.createEntityManager();
-        T result = em.find(entidade, id);
-        em.getTransaction().begin();
-        em.remove(result);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            T result = em.find(entidade, id);
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                em.remove(result);
+                tx.commit();
+            } catch (RuntimeException e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                throw e;
+            }
+        } finally {
+            em.close();
+        }
     }
 
-    public T createCustomQUERY(String jpqlQUERY){
+    public T createCustomQUERY(String jpqlQUERY) {
         EntityManager em = emf.createEntityManager();
-        T resultado = em.createQuery(jpqlQUERY, entidade).setMaxResults(1).getSingleResult();
-        em.close();
-        return resultado;
+        try {
+            return em.createQuery(jpqlQUERY, entidade).setMaxResults(1).getSingleResult();
+        } finally {
+            em.close();
+        }
     }
 }

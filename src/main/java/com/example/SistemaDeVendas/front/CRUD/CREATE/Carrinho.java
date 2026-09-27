@@ -1,11 +1,9 @@
 package com.example.SistemaDeVendas.front.CRUD.CREATE;
 
 import com.example.SistemaDeVendas.DAO.DAO;
-import com.example.SistemaDeVendas.DTO.ProdutoPedidoDTO;
 import com.example.SistemaDeVendas.entidades.Comprador;
 import com.example.SistemaDeVendas.entidades.Pagamento;
 import com.example.SistemaDeVendas.entidades.Pedido;
-import com.example.SistemaDeVendas.entidades.Produto;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -30,15 +28,9 @@ public class Carrinho {
 
     public Carrinho() {
         //
-        DAO daoPedido = new DAO<>(Pedido.class);
-        Pedido pedidoPraDarGetTotal = (Pedido) daoPedido.createCustomQUERY("SELECT p FROM Pedido p ORDER BY p.idPedido DESC");
+        DAO<Pedido> daoPedido = new DAO<>(Pedido.class);
+        Pedido pedidoPraDarGetTotal = daoPedido.createCustomQUERY("SELECT p FROM Pedido p ORDER BY p.idPedido DESC");
         totalPedido.setText(String.valueOf(pedidoPraDarGetTotal.getTotalPedido()));
-        // DROPDOWN PARA ESCOLHER O MEIO DE PAGAMENTO
-        pagamentoEscolha.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
         // BOTÃO PARA FINALIZAR PEDIDO
         finalizarPedidoButton.addActionListener(new ActionListener() {
             @Override
@@ -49,12 +41,12 @@ public class Carrinho {
                         nomeField.getText(),
                         emailField.getText());
 
-                DAO daoDeComprador = new DAO<>(Comprador.class);
+                DAO<Comprador> daoDeComprador = new DAO<>(Comprador.class);
                 daoDeComprador.persisteNoDB(comprador);
 
                 // recebe o pedido criado na tela anterior e da set de informações que faltavam
-                DAO daoDePedido = new DAO<>(Pedido.class); // DAO de pedido pra manipular banco
-                pedido = (Pedido) daoDePedido.createCustomQUERY("SELECT p FROM Pedido p ORDER BY p.id DESC");
+                DAO<Pedido> daoDePedido = new DAO<>(Pedido.class); // DAO de pedido pra manipular banco
+                pedido = daoDePedido.createCustomQUERY("SELECT p FROM Pedido p ORDER BY p.id DESC");
                 pedido.setLocalDeEntrega(enderecoField.getText());
                 pedido.setComprador(comprador);
 

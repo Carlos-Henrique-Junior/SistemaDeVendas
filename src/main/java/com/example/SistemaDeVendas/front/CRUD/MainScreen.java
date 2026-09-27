@@ -62,7 +62,6 @@ public class MainScreen {
         primeiroTexto.setFont(new Font("Arial", Font.BOLD, 26));
 
         // Fotinho da tela
-        labelLogoWolffsOficial = new JLabel();
         ImageIcon IconMerchant = new ImageIcon("assets/ETIQUETA 1 WOLFF'S-1.png");
         labelLogoWolffsOficial = new JLabel(trataImagem(IconMerchant));
 
@@ -77,13 +76,17 @@ public class MainScreen {
         // Configurações do Hibernate
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("pu-vendas");
         EntityManager em = emf.createEntityManager();
-
-        //setups da screen de create
-        Produto produtoBiscoito = em.find(Produto.class, 1);
-        Produto produtoPipoca = em.find(Produto.class, 2);
-        Produto produtoBrownie = em.find(Produto.class, 3);
-        app.montaProdutoNaTela(produtoBiscoito,app);
-        app.montaProdutoNaTelaB(produtoPipoca,app);
-        app.montaProdutoNaTelaC(produtoBrownie,app);
+        try {
+            //setups da screen de create
+            Produto produtoBiscoito = em.find(Produto.class, 1);
+            Produto produtoPipoca = em.find(Produto.class, 2);
+            Produto produtoBrownie = em.find(Produto.class, 3);
+            app.montaProdutoNaTela(produtoBiscoito,app);
+            app.montaProdutoNaTelaB(produtoPipoca,app);
+            app.montaProdutoNaTelaC(produtoBrownie,app);
+        } finally {
+            em.close();
+            emf.close();
+        }
     }
 }
